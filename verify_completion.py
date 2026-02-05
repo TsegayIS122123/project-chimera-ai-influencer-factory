@@ -1,3 +1,5 @@
+# Fix verify_completion.py
+
 #!/usr/bin/env python3
 """
 Verify that Project Chimera is complete and ready for submission.
@@ -125,7 +127,7 @@ def check_mcp_config():
                     else:
                         print(f"   ⚠️  tenxfeedbackanalytics not found in config")
                         all_good = False
-            except:
+            except (json.JSONDecodeError, FileNotFoundError, KeyError):
                 print(f"   ❌ Error reading {file_path}")
                 all_good = False
         else:

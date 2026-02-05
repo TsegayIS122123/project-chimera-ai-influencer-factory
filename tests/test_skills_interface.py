@@ -1,3 +1,5 @@
+# Fix the test_skills_interface.py file
+
 """
 Test: Skills Interface Contracts
 Purpose: Validate that all skills follow the required input/output pattern
@@ -65,7 +67,14 @@ def test_skill_output_includes_confidence_score():
             f"{model.__name__} missing confidence_score field"
         
         field = model.model_fields["confidence_score"]
-        assert field.annotation == float, "confidence_score must be float"
+        # FIX: Use isinstance for type comparison
+        assert isinstance(field.annotation, type) and field.annotation == float, "confidence_score must be float"
+        
+        # Check for ge/le constraints if they exist
+        if hasattr(field, "ge"):
+            assert field.ge == 0.0, "confidence_score minimum should be 0.0"
+        if hasattr(field, "le"):
+            assert field.le == 1.0, "confidence_score maximum should be 1.0"
 
 def test_skill_output_includes_timestamp():
     """Test that all skill outputs include timestamps"""
@@ -74,6 +83,9 @@ def test_skill_output_includes_timestamp():
     for model in output_models:
         assert "timestamp" in model.model_fields, \
             f"{model.__name__} missing timestamp field"
+        # FIX: Check the annotation properly
+        field = model.model_fields["timestamp"]
+        assert field.annotation == datetime, "timestamp must be datetime"
 
 if __name__ == "__main__":
     print("Running skills interface tests...")

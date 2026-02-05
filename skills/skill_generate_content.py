@@ -1,14 +1,16 @@
+# Fix the skill_generate_content.py file
+
 """
 Skill: Content Generation
 Purpose: Create multimodal content for social platforms
 Dependencies: Image generation MCP, Video generation MCP, LLM API
 """
 
-from enum import Enum
 from pydantic import BaseModel, Field
-from typing import List, Optional, Literal
+from typing import List, Optional, Dict, Any
 from datetime import datetime
-import enum
+from enum import Enum
+
 class ContentType(str, Enum):
     IMAGE = "image"
     VIDEO = "video"
@@ -47,8 +49,7 @@ class GenerateContentOutput(BaseModel):
 def execute_generate_content(input_data: GenerateContentInput) -> GenerateContentOutput:
     """
     Generate content for social platforms.
-
-    text
+    
     To be implemented by AI agents using:
     - mcp-server-ideogram for images
     - mcp-server-runway for videos
