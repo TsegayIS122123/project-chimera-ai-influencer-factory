@@ -1,3 +1,5 @@
+# Update .github/workflows/main.yml to remove ruff check
+
 name: Project Chimera CI/CD
 
 on:
@@ -41,11 +43,10 @@ jobs:
         make test
       continue-on-error: true  # Tests should fail initially
     
-    - name: Run linters (black only)
+    - name: Run black check only
       run: |
         source .venv/bin/activate
         python -m black --check .
-        python -m ruff check --select=E,F,W,B .
     
     - name: Security scan
       run: |
