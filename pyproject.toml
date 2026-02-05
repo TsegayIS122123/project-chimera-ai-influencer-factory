@@ -1,4 +1,3 @@
-# Update ruff configuration in pyproject.toml
 [project]
 name = "project-chimera"
 version = "0.1.0"
@@ -59,15 +58,19 @@ warn_return_any = true
 warn_unused_configs = true
 strict = true
 
-# FIX: Update ruff configuration to new format
-[tool.ruff.lint]
-select = ["E", "F", "I", "B"]
-ignore = ["E501", "B008"]
+# CORRECT RUFF CONFIGURATION
+[tool.ruff]
 target-version = "py311"
-line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I"]
+ignore = ["E501", "B008"]
+per-file-ignores = {}
 
 [tool.ruff.format]
 line-length = 88
+indent-style = "space"
+quote-style = "double"
 target-version = "py311"
 
 [tool.pytest.ini_options]
