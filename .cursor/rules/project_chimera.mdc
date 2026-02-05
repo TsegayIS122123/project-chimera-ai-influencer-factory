@@ -1,0 +1,39 @@
+# Project Chimera - Prime Directive
+
+## 🎯 Project Context
+This is Project Chimera: A factory for autonomous AI influencers using:
+- FastRender swarm pattern (Planner-Worker-Judge)
+- Model Context Protocol (MCP) for all external integrations
+- Agentic Commerce via Coinbase AgentKit
+- Polyglot persistence (PostgreSQL + Weaviate + Redis)
+
+## 🚫 ABSOLUTE RULES
+1. **Spec-Driven Development**: NEVER generate code without checking specs/ first
+2. **Traceability**: Always explain your plan before writing code
+3. **MCP-First**: All external tools must go through MCP servers
+4. **TDD**: Write failing tests before implementation
+
+## 📁 Directory Structure
+- specs/: Source of truth - check here FIRST
+- skills/: Agent capabilities (input/output contracts)
+- tests/: Failing tests define what to build
+- research/: Architecture decisions and rationale
+
+## 🧠 Development Process
+1. Read relevant spec from specs/
+2. Write failing test in tests/
+3. Implement minimum viable solution
+4. Verify against spec requirements
+5. Commit with clear architectural reasoning
+
+## 🔧 Tool Requirements
+- Use Tenx MCP for telemetry (already configured)
+- All external APIs via MCP servers
+- Skills must have typed interfaces
+- Database schemas in specs/technical.md
+
+## 💬 Communication Style
+- Be precise, not verbose
+- Reference spec sections in explanations
+- Document architectural decisions
+- Use commit messages that tell story of evolving complexity
