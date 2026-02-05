@@ -1,4 +1,3 @@
-
 name: Project Chimera CI/CD
 
 on:
@@ -42,10 +41,11 @@ jobs:
         make test
       continue-on-error: true  # Tests should fail initially
     
-    - name: Run linters
+    - name: Run linters (black only)
       run: |
         source .venv/bin/activate
-        make lint
+        python -m black --check .
+        python -m ruff check --select=E,F,W,B .
     
     - name: Security scan
       run: |

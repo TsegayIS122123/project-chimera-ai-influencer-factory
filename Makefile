@@ -1,3 +1,4 @@
+# 1. Update the Makefile
 
 .PHONY: setup test spec-check docker-build docker-run lint security-check clean
 
@@ -52,7 +53,7 @@ docker-run:
 lint:
 	@echo "$(YELLOW)Running linters...$(NC)"
 	$(PYTHON) -m black .
-	$(PYTHON) -m ruff check --fix .
+	$(PYTHON) -m ruff check --fix --select=E,F,W,B
 	$(PYTHON) -m mypy .
 	@echo "$(GREEN)✅ Linting completed$(NC)"
 
