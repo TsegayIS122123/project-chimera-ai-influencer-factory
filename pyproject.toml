@@ -1,4 +1,3 @@
-
 [project]
 name = "project-chimera"
 version = "0.1.0"
@@ -36,6 +35,19 @@ dev = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+# FIX: Add hatchling build configuration
+[tool.hatch.build.targets.wheel]
+packages = ["src/project_chimera"]
+
+[tool.hatch.build]
+include = [
+    "src/project_chimera/*.py",
+    "specs/*.md",
+    "skills/*.py",
+    "tests/*.py",
+    "research/*.md",
+]
 
 [tool.black]
 line-length = 88

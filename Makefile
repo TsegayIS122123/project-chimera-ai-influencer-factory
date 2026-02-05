@@ -1,3 +1,4 @@
+
 .PHONY: setup test spec-check docker-build docker-run lint security-check clean
 
 # Colors for output
@@ -18,7 +19,7 @@ setup:
 	@echo "Activate with:"
 	@echo "  source .venv/bin/activate  # Mac/Linux"
 	@echo "  .venv\\Scripts\\activate   # Windows"
-	$(UV) pip install -e .[dev]
+	$(UV) pip install .[dev]
 	@echo "$(GREEN)✅ Setup complete!$(NC)"
 
 test:

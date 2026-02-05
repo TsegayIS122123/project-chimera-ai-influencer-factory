@@ -15,8 +15,8 @@ RUN pip install uv
 # Copy dependency files
 COPY pyproject.toml ./
 
-# Install dependencies with uv
-RUN uv pip install -e .[dev]
+# Install dependencies with uv (REGULAR install, not editable)
+RUN uv pip install .[dev]
 
 # Copy source code
 COPY . .
