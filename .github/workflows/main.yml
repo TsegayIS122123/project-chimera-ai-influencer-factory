@@ -13,29 +13,42 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python
+    - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
-        python-version: '3.13'
+        python-version: '3.11'
     
     - name: Install uv
       run: pip install uv
     
+    - name: Create virtual environment
+      run: uv venv
+    
     - name: Install dependencies
-      run: uv pip install -e .[dev]
+      run: |
+        source .venv/bin/activate
+        uv pip install -e .[dev]
     
     - name: Check spec files
-      run: make spec-check
+      run: |
+        source .venv/bin/activate
+        make spec-check
     
     - name: Run tests (should fail - TDD)
-      run: make test
+      run: |
+        source .venv/bin/activate
+        make test
       continue-on-error: true  # Tests should fail initially
     
     - name: Run linters
-      run: make lint
+      run: |
+        source .venv/bin/activate
+        make lint
     
     - name: Security scan
-      run: make security-check
+      run: |
+        source .venv/bin/activate
+        make security-check
   
   docker-build:
     runs-on: ubuntu-latest
