@@ -11,11 +11,13 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
 
+
 class ContentType(str, Enum):
     IMAGE = "image"
     VIDEO = "video"
     TEXT = "text"
     CAROUSEL = "carousel"
+
 
 class ContentStyle(str, Enum):
     PROFESSIONAL = "professional"
@@ -23,8 +25,10 @@ class ContentStyle(str, Enum):
     HUMOROUS = "humorous"
     INSPIRATIONAL = "inspirational"
 
+
 class GenerateContentInput(BaseModel):
     """Input contract for content generation skill"""
+
     content_type: ContentType
     prompt: str = Field(..., min_length=10, description="Content description")
     target_platform: str = Field(..., description="Platform for content")
@@ -34,8 +38,10 @@ class GenerateContentInput(BaseModel):
     max_length: Optional[int] = Field(None, description="Character limit for text")
     disclosure_required: bool = Field(True, description="Add AI disclosure")
 
+
 class GenerateContentOutput(BaseModel):
     """Output contract for content generation skill"""
+
     success: bool
     content_id: str
     content_url: Optional[str]
@@ -46,10 +52,11 @@ class GenerateContentOutput(BaseModel):
     error_message: Optional[str]
     timestamp: datetime
 
+
 def execute_generate_content(input_data: GenerateContentInput) -> GenerateContentOutput:
     """
     Generate content for social platforms.
-    
+
     To be implemented by AI agents using:
     - mcp-server-ideogram for images
     - mcp-server-runway for videos
