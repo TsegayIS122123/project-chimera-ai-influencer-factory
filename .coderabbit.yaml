@@ -1,0 +1,76 @@
+
+# AI Code Review Policy for Project Chimera
+
+review:
+  # Spec-Driven Development compliance
+  rules:
+    - name: "Check spec compliance"
+      pattern: ".*\\.py$"
+      condition: |
+        # Check if code references specs
+        if not any(line.contains("specs/") for line in file.lines):
+          suggest("Reference relevant spec from specs/ directory")
+    
+    - name: "Check for MCP usage"
+      pattern: "skills/.*\\.py$"
+      condition: |
+        # Skills should use MCP, not direct API calls
+        if file.contains("requests.get") or file.contains("httpx.get"):
+          warn("Skills should use MCP tools, not direct HTTP calls")
+    
+    - name: "Check test coverage"
+      pattern: "skills/.*\\.py$"
+      condition: |
+        # Each skill should have corresponding test
+        skill_name = file.basename.replace(".py", "")
+        test_file = "tests/test_" + skill_name + ".py"
+        if not file_exists(test_file):
+          warn(f"Missing test file: {test_file}")
+
+security:
+  # Security rules for agentic systems
+  rules:
+    - name: "No hardcoded secrets"
+      pattern: ".*"
+      condition: |
+        forbidden = ["API_KEY", "SECRET", "PASSWORD", "TOKEN"]
+        for secret in forbidden:
+          if file.contains(secret) and not file.contains("os.environ"):
+            critical(f"Hardcoded secret found: {secret}")
+    
+    - name: "Check wallet security"
+      pattern: ".*agent.*\\.py$"
+      condition: |
+        if file.contains("private_key") or file.contains("seed_phrase"):
+          critical("Private keys should never be hardcoded. Use environment variables.")
+
+quality:
+  # Code quality standards
+  rules:
+    - name: "Pydantic models for skills"
+      pattern: "skills/.*\\.py$"
+      condition: |
+        if not file.contains("class.*Input.*BaseModel") or not file.contains("class.*Output.*BaseModel"):
+          warn("Skills should have Input and Output Pydantic models")
+    
+    - name: "Confidence scores required"
+      pattern: "skills/.*\\.py$"
+      condition: |
+        if not file.contains("confidence_score"):
+          warn("Skill outputs should include confidence_score field")
+
+comments:
+  # Review comment templates
+  spec_violation: |
+    ⚠️ **Spec Violation Detected**
+    This implementation doesn't reference specs/.
+    Please check: {spec_file}
+    
+  security_issue: |
+    🔴 **Security Issue**
+    {issue_description}
+    Please fix immediately.
+    
+  quality_suggestion: |
+    💡 **Quality Improvement**
+    {suggestion}

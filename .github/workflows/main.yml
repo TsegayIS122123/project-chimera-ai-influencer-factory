@@ -1,0 +1,51 @@
+name: Project Chimera CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+    
+    - name: Install uv
+      run: pip install uv
+    
+    - name: Install dependencies
+      run: uv pip install -e .[dev]
+    
+    - name: Check spec files
+      run: make spec-check
+    
+    - name: Run tests (should fail - TDD)
+      run: make test
+      continue-on-error: true  # Tests should fail initially
+    
+    - name: Run linters
+      run: make lint
+    
+    - name: Security scan
+      run: make security-check
+  
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build Docker image
+      run: make docker-build
+    
+    - name: Run Docker container test
+      run: docker run --rm project-chimera:latest make spec-check
