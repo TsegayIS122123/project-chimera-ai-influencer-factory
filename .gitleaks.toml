@@ -1,0 +1,31 @@
+title = "Project Chimera Gitleaks Config"
+
+[[rules]]
+description = "Generic API Key"
+id = "generic-api-key"
+regex = '''(?i)(?:api|access|account|auth|token|key|secret|password)[-_]?(?:key|token|auth|secret|pass|id)|(?:secret|private|public)[-_]?(?:key|token|auth|secret|pass|id)'''
+tags = ["key", "API", "secret"]
+
+[[rules]]
+description = "AWS Access Key"
+id = "aws-access-key"
+regex = '''(?:A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}'''
+tags = ["key", "AWS"]
+
+[[rules]]
+description = "GitHub Token"
+id = "github-token"
+regex = '''gh[pousr]_[A-Za-z0-9_]{36,251}'''
+tags = ["key", "GitHub"]
+
+[[rules]]
+description = "OpenAI API Key"
+id = "openai-api-key"
+regex = '''sk-[a-zA-Z0-9]{48}'''
+tags = ["key", "OpenAI"]
+
+[[rules]]
+description = "Email Address"
+id = "email-address"
+regex = '''(?i)[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}'''
+tags = ["personal", "email"]
