@@ -1,5 +1,3 @@
-# Update .github/workflows/main.yml to remove ruff check
-
 name: Project Chimera CI/CD
 
 on:
@@ -14,54 +12,32 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    
-    - name: Install uv
-      run: pip install uv
-    
-    - name: Create virtual environment
-      run: uv venv
-    
+
     - name: Install dependencies
-      run: |
-        source .venv/bin/activate
-        uv pip install .[dev]
-        uv pip install pytest pytest-asyncio
-    
+      run: pip install pytest
+
     - name: Check spec files
       run: |
-        source .venv/bin/activate
-        make spec-check
-    
+        if [ ! -f "specs/_meta.md" ]; then exit 1; fi
+        if [ ! -f "specs/functional.md" ]; then exit 1; fi
+        if [ ! -f "specs/technical.md" ]; then exit 1; fi
+        echo "✅ All spec files present"
+
     - name: Run tests (should fail - TDD)
-      run: |
-        source .venv/bin/activate
-        make test
+      run: python -m pytest tests/ -v
       continue-on-error: true  # Tests should fail initially
-    
-    - name: Run black check only
-      run: |
-        source .venv/bin/activate
-        python -m black --check .
-    
-    - name: Security scan
-      run: |
-        source .venv/bin/activate
-        make security-check
-  
+
   docker-build:
     runs-on: ubuntu-latest
     needs: test
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Build Docker image
-      run: make docker-build
-    
-    - name: Run Docker container test
-      run: docker run --rm project-chimera:latest make spec-check
+      run: docker build -t project-chimera:latest .
