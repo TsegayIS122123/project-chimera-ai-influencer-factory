@@ -1,0 +1,142 @@
+# Project Chimera MCP Configuration
+version: 1.0
+description: "MCP servers for autonomous influencer agents"
+
+servers:
+  # Developer Tools
+  - name: "filesystem"
+    command: "npx"
+    args: ["@modelcontextprotocol/server-filesystem", "/app"]
+    env:
+      MCP_ALLOWED_PATHS: "/app"
+    
+  - name: "git"
+    command: "npx"
+    args: ["@modelcontextprotocol/server-git", "/app"]
+    
+  - name: "postgres"
+    command: "docker"
+    args: ["run", "--rm", "postgres-mcp:latest"]
+    env:
+      POSTGRES_URL: "${DATABASE_URL}"
+    
+  # Runtime Agent Tools
+  - name: "trend_research"
+    command: "python"
+    args: ["-m", "skills.mcp_trend_research"]
+    env:
+      TWITTER_API_KEY: "${TWITTER_API_KEY}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"
+    
+  - name: "content_generation"
+    command: "python"
+    args: ["-m", "skills.mcp_content_generation"]
+    env:
+      STABILITY_API_KEY: "${STABILITY_API_KEY}"
+      ELEVENLABS_API_KEY: "${ELEVENLABS_API_KEY}"
+    
+  - name: "social_media"
+    command: "python"
+    args: ["-m", "skills.mcp_social_media"]
+    env:
+      TWITTER_API_KEY: "${TWITTER_API_KEY}"
+      INSTAGRAM_API_KEY: "${INSTAGRAM_API_KEY}"
+      TIKTOK_API_KEY: "${TIKTOK_API_KEY}"
+
+  # Monitoring & Observability
+  - name: "monitoring"
+    command: "python"
+    args: ["-m", "monitoring.mcp_server"]
+    env:
+      DATADOG_API_KEY: "${DATADOG_API_KEY}"
+      SENTRY_DSN: "${SENTRY_DSN}"
+
+# Tool Schemas (OpenAPI-like definitions)
+tool_schemas:
+  trend_research:
+    input:
+      type: object
+      properties:
+        keywords:
+          type: array
+          items: {type: string}
+        platforms:
+          type: array
+          items: {type: string, enum: ["twitter", "instagram", "tiktok"]}
+        max_results:
+          type: integer
+          default: 10
+    output:
+      type: object
+      properties:
+        trends:
+          type: array
+          items: {$ref: "#/definitions/Trend"}
+        confidence_score:
+          type: number
+          minimum: 0
+          maximum: 1
+  
+  content_generate:
+    input:
+      type: object
+      properties:
+        trend_id:
+          type: string
+        content_type:
+          type: string
+          enum: ["video", "image", "text"]
+        style_guide:
+          type: string
+    output:
+      type: object
+      properties:
+        content_url:
+          type: string
+        metadata:
+          type: object
+
+# Capability Discovery
+capabilities:
+  - name: "trend_analysis"
+    description: "Research social media trends"
+    tools: ["trend_research"]
+  
+  - name: "content_creation"
+    description: "Generate multimedia content"
+    tools: ["content_generate", "image_edit", "video_edit"]
+  
+  - name: "social_management"
+    description: "Manage social media accounts"
+    tools: ["post_content", "schedule_post", "analyze_engagement"]
+
+# Authentication Methods
+auth_methods:
+  api_key:
+    header: "X-API-Key"
+    env_var: "CHIMERA_API_KEY"
+  
+  oauth2:
+    provider: "github"
+    scopes: ["repo", "user"]
+  
+  service_account:
+    file_path: "/app/secrets/service-account.json"
+
+# Rate Limits
+rate_limits:
+  default:
+    requests_per_minute: 60
+    burst_size: 10
+  
+  trend_research:
+    requests_per_minute: 30
+  
+  content_generation:
+    requests_per_minute: 20
+
+# Health Checks
+health_checks:
+  interval_seconds: 30
+  timeout_seconds: 5
+  failure_threshold: 3
