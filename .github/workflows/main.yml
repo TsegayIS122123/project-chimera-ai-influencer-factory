@@ -30,7 +30,7 @@ jobs:
 
     - name: Run tests (should fail - TDD)
       run: python -m pytest tests/ -v
-      continue-on-error: true  # Tests should fail initially
+      continue-on-error: true
 
   docker-build:
     runs-on: ubuntu-latest
